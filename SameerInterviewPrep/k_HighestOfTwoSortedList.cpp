@@ -51,7 +51,6 @@ void calculate_k_highest(vector<int> &sorted1,vector<int> &sorted2,int k)
  			}
  		}
  	}	
- 	cout<<"\n "<<i<<" "<<j<<"\n";
 }
 
 int main()
@@ -69,6 +68,6 @@ int main()
 	sorted2.push_back(7);
 	sorted2.push_back(8);	
 
-	calculate_k_highest(sorted1,sorted2,8);
+	calculate_k_highest(sorted1,sorted2,8	);
 	return 0;
 }
