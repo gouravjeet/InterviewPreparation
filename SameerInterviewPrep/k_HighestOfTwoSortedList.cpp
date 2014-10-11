@@ -58,15 +58,17 @@ int main()
 	vector<int> sorted1;
 	vector<int> sorted2;
 
-	sorted1.push_back(1);
 	sorted1.push_back(2);
 	sorted1.push_back(3);
 	sorted1.push_back(4);
-
-	sorted2.push_back(5);
-	sorted2.push_back(6);
-	sorted2.push_back(7);
-	sorted2.push_back(8);	
+	sorted1.push_back(6);
+	sorted1.push_back(50);
+	sorted1.push_back(55);
+	
+	sorted2.push_back(2);
+	sorted2.push_back(88);
+	sorted2.push_back(90);
+	sorted2.push_back(145);	
 
 	calculate_k_highest(sorted1,sorted2,8	);
 	return 0;
