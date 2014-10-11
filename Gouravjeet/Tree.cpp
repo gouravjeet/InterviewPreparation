@@ -61,8 +61,44 @@ public:
 		preOrder(root,myfile);
 		myfile.close();
 	}
+
 	
 };
+int searchInorder(int *io, int elem, int startindex,int endindex ){
+	int i;
+	for(int i=startindex;i<=endindex-1;i++){
+		if(io[i]==elem){
+			return i;
+		}
+	}
+	return -1;
+}
+Node* constructTree(int *io, int *pre, int startindex,int endindex){
+	static int preIndex=0;
+	int i=0;
+	
+	if(startindex>endindex){
+		return NULL;
+	}
+
+	Node* newNode=new Node(pre[preIndex++]);
+	if(startindex==endindex)
+	{
+		cout<<newNode->data;
+		return newNode;
+	}	
+
+	int index=0;
+	index=searchInorder(io,newNode->data,startindex,endindex);
+	// cout<<index;
+	cout<<newNode->data;
+	// //return NULL;
+	newNode->left=constructTree(io,pre,startindex,index-1);
+	newNode->right=constructTree(io,pre,index+1,endindex);
+	return newNode;
+	
+
+}
 void Deserialization(Tree *l1){
 	ifstream istr;
 	char c;
@@ -84,13 +120,21 @@ void Deserialization(Tree *l1){
 	istr.close();
 }
 int main (){
-	Tree *l=new Tree();
-	 l->addElement(4);
-	 l->addElement(1);
-	 l->addElement(9);
-	 l->TreeSerialization();
-	 Tree *l1=new Tree();
-	 Deserialization(l1);
+	// Tree *l=new Tree();
+	//  l->addElement(4);
+	//  l->addElement(1);
+	//  l->addElement(9);
+	//  l->TreeSerialization();
+	//  Tree *l1=new Tree();
+	//  Deserialization(l1);
+
+	 int io[]={13,9,17,6,5,11,2};
+	 int pre[]={6,9,13,17,11,5,2};
+	 int startindex=0;
+	 int endindex=sizeof(io)/sizeof(int);
+	 //cout<<"length"<<endindex<<"HMM";
+	 
+	 Node * rootTree=constructTree(io,pre,0,endindex-1);
 	
 
 
