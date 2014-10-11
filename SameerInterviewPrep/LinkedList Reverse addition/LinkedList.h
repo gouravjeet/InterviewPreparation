@@ -68,4 +68,28 @@ public:
 		}
 		return sum;
 	}
+
+	Node* reverseALinkedList(Node* input)
+	{
+		if(input==NULL)
+		{
+			return NULL;
+		}
+		
+		Node* temp = reverseALinkedList(input->getNext());
+		if(temp==NULL)
+		{
+			head = input;
+			return input;
+		}
+		temp->setNext(input);
+		input->setNext(NULL);
+		return input;
+	}
+
+	void reverseALinkedList()
+	{
+		Node *temp = head;
+		reverseALinkedList	(temp);
+	}
 };

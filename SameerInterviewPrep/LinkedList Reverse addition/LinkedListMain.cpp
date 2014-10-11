@@ -22,6 +22,9 @@ int main()
 
 
 
-	cout<<one.convertToReversedNumber() + two.convertToReversedNumber()	<<"\n";
+	// cout<<one.convertToReversedNumber() + two.convertToReversedNumber()	<<"\n";
+	one.display();
+	one.reverseALinkedList();
+	one.display();
 	return 0;
 }
