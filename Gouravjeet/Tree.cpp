@@ -133,8 +133,10 @@ int main (){
 	 int startindex=0;
 	 int endindex=sizeof(io)/sizeof(int);
 	 //cout<<"length"<<endindex<<"HMM";
-	 
-	 Node * rootTree=constructTree(io,pre,0,endindex-1);
+	 int bitMask=1; 
+	 int b=io[0] & bitMask;
+	 cout<<"Bit "<<b;
+	 //Node * rootTree=constructTree(io,pre,0,endindex-1);
 	
 
 
