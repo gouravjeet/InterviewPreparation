@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector> 
 #include "treeNode.h"
 using namespace std;
 class BST
@@ -44,7 +45,7 @@ public:
  		return;
  	}
 
- 	cout<<inputPtr->getValue();
+ 	cout<<inputPtr->getValue()<<" ";
  	preOrder(inputPtr->getLeft());
  	preOrder(inputPtr->getRight());
  }
@@ -76,6 +77,4 @@ public:
    preOrder(temp,oFile);
    oFile.close();
  }
-
-
 };
