@@ -1,0 +1,162 @@
+package classes;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
+public class PreemptivePriority extends Scheduling{
+	int currentHighestPriority=0;
+	
+	@Override
+	public synchronized Process findNextJob(int currentTime) {
+		//For loop available time less than current 
+		if(processes.size()!=0){
+			Process toReturn = processes.get(0);
+			currentHighestPriority = toReturn.getPriority();
+			processes.remove(0);
+			return toReturn;
+		}
+		return null;
+	}
+	
+	public PreemptivePriority()
+	{
+		super();
+		RandomNumberGenerator priorityGenerator = new RandomNumberGenerator(1,4);
+		for(int i=0;i<processes.size();i++)
+		{
+			int generatedRandomPriority =  priorityGenerator.generateNumber();
+			processes.get(i).setPriority(generatedRandomPriority);
+		}
+		
+		sortProcessesList();
+	}
+	
+	public boolean needsPreemption()
+	{
+		for(int i=0;i<processes.size();i++)
+		{
+			int agedTimeTemp = processes.get(i).getAgedTime();
+			processes.get(i).setAgedTime(agedTimeTemp+50);
+			if(agedTimeTemp+50>1200)
+			{
+				int processPriorityTemp = processes.get(i).getPriority();
+				if(processPriorityTemp>1)
+				{
+				 processes.get(i).setPriority(processPriorityTemp-1);	
+				}
+				processes.get(i).setAgedTime(0);
+			}
+		}
+		
+		sortProcessesList();
+		//timeToAvailable
+		if(processes.get(0).getPriority()<currentHighestPriority)
+		{
+			//Preemption needed
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public int schedule(Process currentProcess, Process previousProcess,
+			int currentTime) {
+		// TODO Auto-generated method stub
+		if( activeCPUBoundProcess > 0 )
+		{
+			//If process is about to expire soon in less than 50
+			processStartsOn(currentProcess,currentTime);
+			if(currentProcess.getProcessType().equals(ProcessType.INTERACTIVE)){
+				while(currentProcess.getBurstTimeRemaining()>0)
+				{
+					currentTime=currentTime+50;
+					currentProcess.setBurstTimeRemaining(currentProcess.getBurstTimeRemaining()-50);
+					if(needsPreemption())
+					{
+						processes.add(currentProcess);
+						sortProcessesList();
+						break;
+					}
+				}
+				if(currentProcess.getBurstTimeRemaining()<=0)
+				{
+					processEndsOn(currentProcess, currentTime);
+					eventNotifier(EventType.BURSTCOMPLETE,currentProcess,null,currentTime);
+					currentProcess.setBurstTime(currentProcess.generateBurstTime());
+					currentProcess.setTimeToAvailable(currentProcess.generateAvailableTime());
+					processes.add(currentProcess);
+					sortProcessesList();
+				}
+			}
+			else
+			{
+				while(currentProcess.getBurstTimeRemaining()>0)
+				{
+					currentTime=currentTime+50;
+					currentProcess.setBurstTimeRemaining(currentProcess.getBurstTimeRemaining()-50);
+					if(needsPreemption())
+					{
+						processes.add(currentProcess);
+						sortProcessesList();
+						break;
+					}
+				}
+				if(currentProcess.getBurstTimeRemaining()<=0)
+				{
+					processEndsOn(currentProcess, currentTime);
+					currentProcess.setBurstCount(currentProcess.getBurstCount()+1);
+					eventNotifier(EventType.BURSTCOMPLETE,currentProcess,null,currentTime);
+					if(currentProcess.getBurstCount()==getBurstCountForCPUBoundProcess()){
+						setActiveCPUBoundProcess(getActiveCPUBoundProcess()-1);
+						currentProcess.setTurnAroundTime(currentTime-currentProcess.getStartTime());
+						eventNotifier(EventType.TERMINATE,currentProcess,null,currentTime);
+					}
+					else
+					{
+						currentProcess.setTimeToAvailable(currentProcess.generateAvailableTime());
+						currentProcess.setBurstTime(currentProcess.generateBurstTime());
+						currentProcess.addBurstsTime(currentProcess.getBurstCount(), currentProcess.getBurstTime());
+						currentProcess.setTotalBurstTime(currentProcess.getTotalBurstTime()+currentProcess.getBurstTime());
+						addProcess(currentProcess);
+					}
+					
+					
+					
+					
+				}
+				
+			}
+			//currentTime = currentTime + contextSwitchingTime;
+		}
+		return currentTime;
+	}
+	
+	
+	public void reducePriorityByOne()
+	{
+		if(processes.size()!=0){
+			for(int i=0;i<processes.size();i++)
+			{
+				if(processes.get(i).getPriority()>1)
+				{
+					processes.get(i).setPriority(processes.get(i).getPriority()-1);
+				}
+					
+			}
+			sortProcessesList();
+		}		
+	}
+	
+	public void sortProcessesList()
+	{
+		Collections.sort(processes, new Comparator<Process>() {
+		    public int compare(Process one, Process other) {
+		        return one.getPriority()<other.getPriority()?-1:1;
+		    }
+		});
+	}
+	
+	
+}

@@ -1,0 +1,15 @@
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class whitespace {
+	public static void main(String args[])
+	{
+		String one = "apdfco*dt";
+		Map<Character,Integer> freqMapper = new HashMap<Character,Integer>();
+		for(int i=0;i<one.length();i++)
+		{
+			freqMapper.containsKey(one[i])?freqMapper.put(one[i],freqMapper.get(one[i]))+1):freqMapper.put(one[i],1);
+		}
+	}
+}

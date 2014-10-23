@@ -1,0 +1,113 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+
+public class Solution {
+ public static ArrayList<Integer> returnRange(int input,int maxDistance)
+ {
+  ArrayList<Integer> rangeArray = new ArrayList<Integer>();	 
+  for(int i=4;i>=0;i--)
+  {
+	  if(input-i>=0)
+	  {
+		  rangeArray.add(input-i);
+	  }
+  }
+  
+  for(int i=0;i<=maxDistance;i++)
+  {
+	  if(input+i<=10)
+	  {
+		  rangeArray.add(input+i);
+	  }
+  }
+  return rangeArray;
+ }
+ 
+ public static void main(String args[])
+ {
+	 String test = "4 1 3 6 10";
+	 String[] splitted = test.split("\\s+");
+	 ArrayList<Integer> houseLocations = new ArrayList<Integer>();
+	 LinkedHashMap<Integer,Set<Integer>> countMap = new LinkedHashMap<Integer,Set<Integer>>();
+	 LinkedHashMap<Integer,Set<Integer>> countMapHousesWithDist = new LinkedHashMap<Integer, Set<Integer>>();
+	 int maxDistance=0;;
+	 for(int i=0;i<splitted.length;i++)
+	 {
+		 if(Integer.parseInt(splitted[i])>maxDistance)
+		 {
+			 maxDistance = Integer.parseInt(splitted[i]);
+		 }
+		 houseLocations.add(Integer.parseInt(splitted[i]));
+	 }
+	 Collections.sort(houseLocations);
+
+	 for(int i=0;i<maxDistance;i++)
+	 {
+		 ArrayList<Integer> range = returnRange(i,maxDistance);
+		 for(int iter : range)
+		 {
+			 Set<Integer> tempSet;
+			 Set<Integer> tempSet2;
+			 if(houseLocations.contains(iter))
+			 {
+			 if(countMap.containsKey(i))
+			 {
+				 tempSet2 = countMap.get(i);
+				 tempSet2.add(iter);
+				 countMap.put(i,tempSet2);
+				 tempSet = countMapHousesWithDist.get(iter);
+				 tempSet.add(iter);
+				 countMapHousesWithDist.put(iter,tempSet);
+			 }
+			 else
+			 {
+				 tempSet2 = new HashSet<Integer>();
+				 tempSet2.add(iter);
+				 countMap.put(i,tempSet2);
+				 tempSet = new HashSet<Integer>();
+				 tempSet.add(iter);
+				 countMapHousesWithDist.put(iter,tempSet);
+			 }
+			 }
+		 }
+	 }
+	 
+//	 List<Entry<Integer, Integer>> list = new LinkedList<Entry<Integer, Integer>>(countMap.entrySet());
+//	 Collections.sort(list, new Comparator<Entry<Integer, Integer>>()
+//		        {
+//		 	
+//		            public int compare(Entry<Integer, Integer> o1,
+//		                    Entry<Integer, Integer> o2)
+//		            {
+//		                return o1.getValue()>o2.getValue()?-1:1;
+//		            }
+//		        });
+	 
+	 Iterator it = countMap.entrySet().iterator();
+	 Map.Entry entryFirst = (Entry) it.next();
+	 int maxValue = (int) entryFirst.getValue();
+	 if(maxValue == 4)
+	 {
+		 System.out.println(entryFirst.getKey()); 
+	 }
+	 System.out.println(countMapHousesWithDist.get(entryFirst.getKey()).size());
+	 if(countMapHousesWithDist.get(entryFirst.getKey()).size()==5)
+	 {
+		 System.out.println(entryFirst.getKey());
+	 }
+	 
+	 System.out.println(maxValue);
+	 
+ }
+}

@@ -1,0 +1,47 @@
+package classes;
+
+public class Processor implements Runnable{
+	int currentTime=0;
+	Scheduling scheduling;
+	Process currentProcess;
+	Process previousProcess=null;
+	int timeIncreament=10; // this we are setting to 10 ---we can set it to 1  ms --but then it will be too slow
+	public int getCurrentTime() {
+		return currentTime;
+	}
+
+	public void setCurrentTime(int currentTime) {
+		this.currentTime = currentTime;
+	}
+	public Processor(Scheduling scheduling) {
+		this.scheduling=scheduling;
+	}
+	public void schedule(){
+		while(scheduling.getActiveCPUBoundProcess()>0){
+			
+			currentProcess=scheduling.findNextJob(currentTime);
+			//Check for current and previous process and call context switch
+			if(currentProcess==null){
+				// when no processor is available at this time
+				currentTime =currentTime+timeIncreament;
+			}
+			else{
+				currentTime=scheduling.schedule(currentProcess, previousProcess, currentTime);
+				
+				previousProcess=currentProcess;
+			}
+			
+
+		}
+		
+	
+	}
+
+	@Override
+	public void run() {
+		schedule();
+
+	}
+
+
+}

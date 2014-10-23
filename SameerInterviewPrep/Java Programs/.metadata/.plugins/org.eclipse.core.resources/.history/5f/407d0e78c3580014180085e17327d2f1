@@ -1,0 +1,55 @@
+package classes;
+
+public class ProcessManagement {
+	protected int numberOfProcessors;
+	protected Scheduling scheduling;
+	protected Processor[] processors;
+	public int getNoOfProcessor() {
+		return numberOfProcessors;
+	}
+
+	public void setNoOfProcessor(int numberOfProcessors) {
+		this.numberOfProcessors = numberOfProcessors;
+	}
+	
+	public ProcessManagement(int numberOfProcessors,Scheduling scheduling) {
+		this.numberOfProcessors=numberOfProcessors;
+		this.scheduling=scheduling;
+	}
+	public void singleProcessorManagement(){
+		Processor processor=new Processor(scheduling);
+		processor.schedule();
+		
+	}
+	public void multiProcessorManagement(){
+		processors=initializeProcessors();
+		for(int i=0; i < numberOfProcessors ; i++){
+			new Thread(processors[i]).start();
+		}
+		
+	}
+	public void multiProcessorManagement1(){
+		processors=initializeProcessors();
+		for(int i=0; i < numberOfProcessors ; i++){
+			new Thread(processors[i]).start();
+		}
+		
+	}
+	public Processor getProcessor(){
+		Processor processor=processors[0];
+		for(int i=1;i<processors.length;i++){
+			if(processors[i].getCurrentTime()<processor.getCurrentTime()){
+				processor=processors[i];
+			}
+		}
+		return processor;
+	}
+	public Processor[] initializeProcessors(){
+		Processor[] processors=new Processor[numberOfProcessors];
+		for (int i =0; i < numberOfProcessors;i++){
+			processors[i]=new Processor(scheduling);
+		}	
+		return processors;
+	}
+
+}

@@ -1,0 +1,75 @@
+package classes;
+
+
+public class SchedulingSimulation {
+	static int totalProcesses=12;
+	static int burstCountForCPUBoundProcess=8;
+	static int numberOfProcessors=4; //to implement multiple processors
+	static String schedulingType="rr";
+	static String managementType="single";   // single or multi  --for multiple processor
+
+	public static Scheduling generateSchedulingObject(String schedulingName){
+		if(schedulingName.equalsIgnoreCase("sjf")){
+			return new SJFScheduling();
+		}
+		else if(schedulingName.equalsIgnoreCase("sjfwithp")){
+			return null;
+		}
+		else if(schedulingName.equalsIgnoreCase("rr")){
+			return new RRScheduling();
+		}
+		else if(schedulingName.equalsIgnoreCase("priority")){
+			return null;
+		}
+		return null;
+	}
+	public static void main(String[] args) {
+		Scheduling scheduling = null;
+		if(args.length!=0){
+			// 0-- for no of processes
+			// 1-- for number of burst for cpu bound process
+			// 2-- for no of processors
+			// 3-- for type of scheduling 
+			if(args[0]!=null){
+				try { 
+					totalProcesses=Integer.parseInt(args[0]); 
+
+				} catch(NumberFormatException e) { 
+					System.out.println("First Argument pass is not a number. Please try again !!");
+					System.exit(0);
+				}
+				if(args[1]!=null){
+					try { 
+						burstCountForCPUBoundProcess=Integer.parseInt(args[1]); 
+
+					} catch(NumberFormatException e) { 
+						System.out.println("Second Argument pass is not a number. Please try again !!");
+						System.exit(0);
+					}
+				}
+				if(args[2]!=null){
+					try { 
+						numberOfProcessors=Integer.parseInt(args[2]); 
+					} catch(NumberFormatException e) { 
+						System.out.println("Third Argument pass is not a number. Please try again !!");
+						System.exit(0);
+					}
+				}
+			}	
+		}
+		scheduling=generateSchedulingObject(schedulingType);
+		scheduling.setBurstCountForCPUBoundProcess(burstCountForCPUBoundProcess);
+		scheduling.setTotalProcesses(totalProcesses);
+		ProcessManagement processManagement= new ProcessManagement(numberOfProcessors,scheduling);
+		System.out.println("start");
+		if(managementType.equals("single")){
+			
+			processManagement.singleProcessorManagement();
+		}
+		else{
+			processManagement.multiProcessorManagement();
+		}
+		System.out.println("All CPU bound process completed- Simulation ended");
+		System.out.println("end");
+	}
+}

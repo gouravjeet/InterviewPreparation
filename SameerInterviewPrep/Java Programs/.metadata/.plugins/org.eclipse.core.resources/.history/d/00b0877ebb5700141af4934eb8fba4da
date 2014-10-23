@@ -1,0 +1,27 @@
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class whitespace {
+	protected static Map<Character,Integer> freqMapper = new HashMap<Character,Integer>();
+	
+	public static void evaluate(String input)
+	{
+		
+	}
+	public static void main(String args[])
+	{
+		String one = "apdfco*dt";
+
+		for(int i=0;i<one.length();i++)
+		{
+			if(freqMapper.containsKey(one.charAt(i)))
+			{freqMapper.put(one.charAt(i),freqMapper.get(one.charAt(i))+1);}
+			else
+			{freqMapper.put(one.charAt(i),1);}
+			
+		}
+		evaluate("cat");
+	}
+}
+

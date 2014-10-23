@@ -1,0 +1,87 @@
+package classes;
+
+public class SJFScheduling extends Scheduling{
+
+	@Override
+	public  int schedule(Process currentProcess,Process previousProcess,int currentTime) {
+
+		if( activeCPUBoundProcess > 0){
+
+			// serve each process till all the process get over or CPU bound process get finish
+			processStartsOn(currentProcess, currentTime);
+			currentTime=currentTime+currentProcess.getBurstTime();
+			processEndsOn(currentProcess, currentTime);
+			if(currentProcess.getProcessType().equals(ProcessType.INTERACTIVE)){
+				eventNotifier(EventType.BURSTCOMPLETE,currentProcess,null,currentTime);
+				currentProcess.setBurstTime(currentProcess.generateBurstTime());
+/*verify*/		currentProcess.setTotalBurstTime(currentProcess.getTotalBurstTime()+currentProcess.getBurstTime());
+				currentProcess.setBurstTimeRemaining(currentProcess.getBurstTime());
+				//***** do some time scheduling*****
+				currentProcess.setTimeToAvailable(currentTime+currentProcess.generateAvailableTime());
+				addProcess(currentProcess);
+
+			}
+			else if (currentProcess.getProcessType().equals(ProcessType.CPUBOUND)){
+				currentProcess.addWaitsTime(currentProcess.getBurstCount(), currentTime-currentProcess.getBurstTime());
+				currentProcess.setBurstCount(currentProcess.getBurstCount()+1);
+				eventNotifier(EventType.BURSTCOMPLETE,currentProcess,null,currentTime);
+				if(currentProcess.getBurstCount()==getBurstCountForCPUBoundProcess()){
+					// do nothing
+					setActiveCPUBoundProcess(getActiveCPUBoundProcess()-1);
+/*verify*/					currentProcess.setTurnAroundTime(currentTime-currentProcess.getStartTime());
+					eventNotifier(EventType.TERMINATE,currentProcess,null,currentTime);
+
+				}
+				else {
+					currentProcess.setBurstTime(currentProcess.generateBurstTime());
+					currentProcess.addBurstsTime(currentProcess.getBurstCount(), currentProcess.getBurstTime());
+/*verify*/					currentProcess.setTotalBurstTime(currentProcess.getTotalBurstTime()+currentProcess.getBurstTime());
+					currentProcess.setBurstTimeRemaining(currentProcess.getBurstTime());
+					//***** do some time scheduling*****
+					currentProcess.setTimeToAvailable(currentTime+currentProcess.generateAvailableTime());
+					// add again in the queqe
+					addProcess(currentProcess);
+				}
+			}
+			// because of context switch
+			currentTime=currentTime+contextSwitchingTime;
+		}
+		return currentTime;
+	}
+
+
+
+
+	@Override
+	public synchronized Process findNextJob(int currentTime) {
+		if(processes.size()!=0){
+			int indexOfShortest=0;
+			Process nextJob=null;
+			for(int j=0;j<processes.size();j++){
+				if(processes.get(j).getTimeToAvailable()<=currentTime){
+					nextJob=processes.get(j);
+					indexOfShortest=j;
+					break;
+				}
+			}
+			if(nextJob!=null){
+				for(int i=indexOfShortest; i< processes.size();i++){
+					// obtaining the shortest burst job that is available
+					if((processes.get(i).getBurstTime()<nextJob.getBurstTime()) && (processes.get(i).getTimeToAvailable()<=currentTime)){
+
+						nextJob=processes.get(i);
+						indexOfShortest=i;
+					}
+				}
+
+				processes.remove(indexOfShortest);
+				return nextJob;
+			}
+		}
+		return null;
+	}
+	public SJFScheduling() {
+		super();
+	}
+
+}

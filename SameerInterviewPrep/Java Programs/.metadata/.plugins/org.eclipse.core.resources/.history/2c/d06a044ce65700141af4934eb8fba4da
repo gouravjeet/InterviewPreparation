@@ -1,0 +1,72 @@
+package classes;
+
+import java.util.Collections;
+import java.util.Comparator;
+
+public class PreemptivePriority extends Scheduling{
+	int currentHighestPriority=0;
+	@Override
+	public synchronized Process findNextJob(int currentTime) {
+		if(processes.size()!=0){
+			Process toReturn = processes.get(0);
+			currentHighestPriority = toReturn.getPriority();
+			processes.remove(0);
+			return toReturn;
+		}
+		return null;
+	}
+	
+	public PreemptivePriority()
+	{
+		super();
+		RandomNumberGenerator priorityGenerator = new RandomNumberGenerator(1,4);
+		for(int i=0;i<processes.size();i++)
+		{
+			int generatedRandomPriority =  priorityGenerator.generateNumber();
+			processes.get(i).setPriority(generatedRandomPriority);
+		}
+		
+		sortProcessesList();
+	}
+	
+	@Override
+	public int schedule(Process currentProcess, Process previousProcess,
+			int currentTime) {
+		// TODO Auto-generated method stub
+		if( activeCPUBoundProcess > 0 )
+		{
+			processStartsOn(currentProcess,currentTime);
+			if(currentProcess.getProcessType().equals(ProcessType.INTERACTIVE)){
+			}
+			
+		}
+		return 0;
+	}
+	
+	
+	public void reducePriorityByOne()
+	{
+		if(processes.size()!=0){
+			for(int i=0;i<processes.size();i++)
+			{
+				if(processes.get(i).getPriority()>1)
+				{
+					processes.get(i).setPriority(processes.get(i).getPriority()-1);
+				}
+					
+			}
+			sortProcessesList();
+		}		
+	}
+	
+	public void sortProcessesList()
+	{
+		Collections.sort(processes, new Comparator<Process>() {
+		    public int compare(Process one, Process other) {
+		        return one.getPriority()<other.getPriority()?-1:1;
+		    }
+		});
+	}
+	
+	
+}

@@ -1,0 +1,7 @@
+
+public class whitespace {
+	public static void main(String args[])
+	{
+		String one = "apdfco*dt";
+	}
+}

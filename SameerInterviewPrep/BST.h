@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector> 
+#include <queue>
 #include "treeNode.h"
 using namespace std;
 class BST
@@ -76,5 +77,7 @@ public:
    treeNode *temp = root;		
    preOrder(temp,oFile);
    oFile.close();
- }
+ }(
+
+
 };

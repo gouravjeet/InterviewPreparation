@@ -1,0 +1,111 @@
+package classes;
+
+public class RRScheduling extends Scheduling{
+	int timeSlice=100;
+
+	public RRScheduling() {
+		super();
+	}
+	@Override
+	public  int schedule(Process currentProcess,Process previousProcess,int currentTime) {
+		if( activeCPUBoundProcess > 0){ // it might possible that after selecting process,  some other processor has completed all CPU processes.
+			if(currentProcess.getProcessType().equals(ProcessType.INTERACTIVE)){
+				processStartsOn(currentProcess,currentTime);
+				int burstRemaining=currentProcess.getBurstTimeRemaining();
+				if(burstRemaining<=timeSlice){
+					currentTime=currentTime+burstRemaining;
+					eventNotifier(EventType.BURSTCOMPLETE, currentProcess, null,currentTime);
+					processEndsOn(currentProcess,currentTime);
+					// set next burst time and remaining time
+					currentProcess.setBurstTime(currentProcess.generateBurstTime());
+					currentProcess.setTotalBurstTime(currentProcess.getTotalBurstTime()+currentProcess.getBurstTime());
+					currentProcess.setBurstTimeRemaining(currentProcess.getBurstTime());
+					//***** do some time scheduling*****
+					currentProcess.setTimeToAvailable(currentTime+currentProcess.generateAvailableTime());
+					addProcess(currentProcess);
+					currentTime=currentTime+contextSwitchingTime;
+				}
+				else {
+					//burst require is more than time slice
+					currentTime=currentTime+timeSlice;
+					burstRemaining=burstRemaining-timeSlice;
+					currentProcess.setBurstTimeRemaining(burstRemaining);
+					addProcess(currentProcess);
+					processEndsOn(currentProcess, currentTime);
+					currentTime=currentTime+contextSwitchingTime;
+				}
+			}
+			else{
+				// CPU BOUND PROCESS
+				processStartsOn(currentProcess, currentTime);
+				int burstRemaining=currentProcess.getBurstTimeRemaining();
+				if(burstRemaining==currentProcess.getBurstTime()){
+					// first time the process is getting the burst --set burst start to current time
+					currentProcess.setBurstStart(currentTime);
+				}
+				if(burstRemaining<=timeSlice){
+					currentTime=currentTime+burstRemaining;
+					eventNotifier(EventType.BURSTCOMPLETE, currentProcess, null,currentTime);
+					processEndsOn(currentProcess, currentTime);
+					currentProcess.addWaitsTime(currentProcess.getBurstCount(), currentTime-currentProcess.getBurstStart());
+					currentProcess.setBurstCount(currentProcess.getBurstCount()+1);
+					
+					if(currentProcess.getBurstCount()==getBurstCountForCPUBoundProcess()){
+						activeCPUBoundProcess=activeCPUBoundProcess-1;
+						/*verify */					currentProcess.setTurnAroundTime(currentTime-currentProcess.getStartTime());
+						eventNotifier(EventType.TERMINATE, currentProcess, null,currentTime);
+					}
+					else{
+						currentProcess.setBurstTime(currentProcess.generateBurstTime());
+						currentProcess.addBurstsTime(currentProcess.getBurstCount(), currentProcess.getBurstTime());
+						currentProcess.setTotalBurstTime(currentProcess.getTotalBurstTime()+currentProcess.getBurstTime());
+						currentProcess.setBurstTimeRemaining(currentProcess.getBurstTime());
+						//***** do some time scheduling*****
+						currentProcess.setTimeToAvailable(currentTime+currentProcess.generateAvailableTime());
+						addProcess(currentProcess);
+					}
+					
+					currentTime=currentTime+contextSwitchingTime;
+
+				}
+				else{
+					// burst time is greater than time slice
+					currentTime=currentTime+timeSlice;
+					burstRemaining=burstRemaining-timeSlice;
+					currentProcess.setBurstTimeRemaining(burstRemaining);
+					addProcess(currentProcess);
+					processEndsOn(currentProcess, currentTime);
+					currentTime=currentTime+contextSwitchingTime;
+				}
+			}
+
+		}
+		return currentTime;
+	}
+
+
+
+	@Override
+	public synchronized Process findNextJob(int currentTime) {
+		if(processes.size()!=0){
+			Process nextJob=null;
+			for(int i=0; i< processes.size();i++){
+				if(processes.get(i).getTimeToAvailable()<= currentTime){
+					nextJob=processes.get(i);
+					processes.remove(i);
+					return nextJob;
+				}
+			}
+		}
+		return null;
+	}
+
+	public int getTimeSlice() {
+		return timeSlice;
+	}
+
+	public void setTimeSlice(int timeSlice) {
+		this.timeSlice = timeSlice;
+	}
+
+}

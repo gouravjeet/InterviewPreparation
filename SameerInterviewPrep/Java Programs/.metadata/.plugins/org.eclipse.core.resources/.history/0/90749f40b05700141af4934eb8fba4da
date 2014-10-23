@@ -1,0 +1,43 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+
+
+public class Solution {
+ public static ArrayList<Integer> returnRange(int input)
+ {
+  ArrayList<Integer> rangeArray = new ArrayList<Integer>();	 
+  for(int i=4;i>=0;i--)
+  {
+	  if(input-i>=0)
+	  {
+		  rangeArray.add(input-i);
+	  }
+  }
+  return rangeArray;
+ }
+ 
+ public static void main(String args[])
+ {
+	 String test = "4 1 3 6 10";
+	 String[] splitted = test.split("\\s+");
+	 HashMap<Integer,Integer> countMap = new HashMap<Integer,Integer>();
+	 for(int i=0;i<splitted.length;i++)
+	 {
+		 int a = Integer.parseInt(splitted[i]);
+		 ArrayList<Integer> range = returnRange(a);
+		 for(int iter : range)
+		 {
+			 if(countMap.containsKey(iter))
+			 {
+				 countMap.put(iter, countMap.get(iter)+1);
+			 }
+			 else
+			 {
+				 countMap.put(iter,1);
+			 }
+		 }
+	 }
+	 System.out.println();
+	 
+ }
+}
