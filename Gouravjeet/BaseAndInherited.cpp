@@ -52,6 +52,7 @@ public:
 
 int main(){
 	//BaseAndInherited b;
+
 	Inherited i(1);
 	i.displayBase();
 
