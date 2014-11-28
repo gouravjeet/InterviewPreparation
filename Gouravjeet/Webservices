@@ -1,0 +1,81 @@
+Web Services Characteristic
+
+Exchange of data happens over the internet where the client send the HTTP request and Server sends the response.Client can show it on HTML
+
+Protocol
+1) Client--> Server
+Format--  is the prototcol and is standardised and SOAP use SOAP protocol and messages are in XML format and client 
+
+In REST, There are no rules, Both can send messages any messsages ie it can be JSON, XML
+and how communication happens in REST is over the web and it happens over the HTTP and 
+but there are many methods we need to use --> messages can be send in any method
+
+Service definition-> For using API, we need to what it does and what is the return type and is the definition of the 
+WSDL and will get the WSDL that will the standard documentation for exchanging messages in case of SOAP web services.
+
+Standard in case of REST-->NO 
+WADL -->
+SOAP has strict rules and all SOAP follows the SOAP specification which tell how it should be 
+REST does not have specification and Reprsentational States transfer and is a concept 
+is a architectural style and is a set of guideline and 
+Some are not fully restfull and our goal is to make it as rest as possible.
+
+HTTP specification stands for HyperText Transfer Protocol and is a way to exchange stuff on the web  and HyperText is Text containing Hyperlinks and a common way to write hypertext is HTML and 
+
+Resource Locations --> practice is to have resource based URLs
+? --> query parameter
+Action based URI
+Resource based--> server doesnot do anything but we will just into the data and rather than doing processing
+
+HTTP Methods--> HTTP has methods or verbs to interact with URL 
+
+GET -> get information 
+POST-> 
+PUT->
+DELETE->remove a resource
+
+A good API will make use of all the methods 
+
+Metadata-> HTTP also give the metadata like 
+	Status Code and will indicates whether it is successful 200 and server not found 404 and server 500 
+
+format of the messages-> 
+Header Value named Content Type
+	text/xml
+	application/json
+
+Content Negotiation-> Client will get data according to what he requires
+
+Resource absed URI
+HTTP Methods
+HTTP Status Code
+Message headers  
+
+Instance Use resources and Collection use URIs
+
+A single instance is accessible using URI to know what URI is
+If you want to get all messages, 
+WHY Rest --> Scalable  and Generality..a  newtork of machines and Latency(Caching) and Security 
+and Encapsulation and Generality and Independence
+
+HATEOAS that means
+
+REST is an architectural style and Fine grain 
+
+Entity expansion
+AuthenticationScheme
+401- Unauthorized means unauthenticaeed
+403-Forbidden means unauthorized
+
+
+
+
+
+
+
+
+
+
+
+
+
